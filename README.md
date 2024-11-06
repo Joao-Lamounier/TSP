@@ -1,2 +1,1 @@
-# TSP
-tsp-heuristic-explorer
+# TSP Project
