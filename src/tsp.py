@@ -1,6 +1,6 @@
 import math
 import numpy as np
-
+import os
 
 class TSP:
 
@@ -83,13 +83,9 @@ class TSP:
 
 
 if __name__ == '__main__':
+    pasta = 'Benchmark'
+    lista_arquivos = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta) if arquivo.endswith('.tsp')]
 
-    lista_arquivo = ['Benchmark/a280.tsp', 'Benchmark/berlin52.tsp', 'Benchmark/ch130.tsp', 'Benchmark/ch150.tsp',
-                     'Benchmark/d198.tsp', 'Benchmark/eil101.tsp', 'Benchmark/kroA100.tsp', 'Benchmark/kroB100.tsp',
-                     'Benchmark/kroC100.tsp', 'Benchmark/kroD100.tsp', 'Benchmark/kroE100.tsp', 'Benchmark/lin105.tsp',
-                     'Benchmark/pr76.tsp', 'Benchmark/rat99.tsp', 'Benchmark/rd100.tsp', 'Benchmark/rd400.tsp',
-                     'Benchmark/st70.tsp', 'Benchmark/ts225.tsp']
-
-    for arquivo in lista_arquivo:
+    for arquivo in lista_arquivos:
         tsp = TSP.load_tsp(arquivo)
         print(tsp)
