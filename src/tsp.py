@@ -15,7 +15,7 @@ class TSP:
 
         for i in range(self.dimension):
             for j in range(self.dimension):
-                self.matriz[i, j] = TSP.eucledian_2d_calc(self.node_list[i], self.node_list[j])
+                self.matriz[i, j] = TSP.euclidean_2d_calc(self.node_list[i], self.node_list[j])
 
     def __str__(self):
 
@@ -76,7 +76,7 @@ class TSP:
         return tsp
 
     @staticmethod
-    def eucledian_2d_calc(node1, node2):
+    def euclidean_2d_calc(node1, node2):
         x = node1[1] - node2[1]
         y = node1[2] - node2[2]
         return math.sqrt(x * x + y * y)
