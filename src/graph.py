@@ -2,7 +2,8 @@ import math
 import numpy as np
 import os
 
-class TSP:
+
+class Graph:
 
     def __init__(self, name, comment, problem_type, dimension, edge_weight_type, node_list):
         self.name = name
@@ -15,7 +16,7 @@ class TSP:
 
         for i in range(self.dimension):
             for j in range(self.dimension):
-                self.graph[i, j] = TSP.euclidean_2d_calc(self.node_list[i], self.node_list[j])
+                self.graph[i, j] = Graph.euclidean_2d_calc(self.node_list[i], self.node_list[j])
 
     def __str__(self):
 
@@ -28,7 +29,7 @@ class TSP:
         return s
 
     @staticmethod
-    def load_tsp(file_path):
+    def load_graph(file_path):
 
         name = ""
         comment = ""
@@ -46,19 +47,19 @@ class TSP:
 
                 line = line.strip()  # Remove espaços em branco
 
-                if line.startswith("NAME"):
-                    name = line.split(":")[1].strip()  # Nome do arquivo/problema
-                elif line.startswith("COMMENT"):
-                    comment = line.split(":")[1].strip()  # Nome do arquivo/problema
-                elif line.startswith("TYPE"):
-                    problem_type = line.split(":")[1].strip()  # Tipo de problema
-                elif line.startswith("DIMENSION"):
-                    dimension = int(line.split(":")[1].strip())  # Número de cidades (dimensão)
-                elif line.startswith("EDGE_WEIGHT_TYPE"):
-                    edge_weight_type = line.split(":")[1].strip()  # Tipo de distância (EUC_2D ou outro)
-
-                if line == "NODE_COORD_SECTION":
-                    read_coord = True  # Começou a seção de coordenadas
+                if not read_coord:
+                    if line.startswith("NAME"):
+                        name = line.split(":")[1].strip()  # Nome do arquivo/problema
+                    elif line.startswith("COMMENT"):
+                        comment = line.split(":")[1].strip()  # Nome do arquivo/problema
+                    elif line.startswith("TYPE"):
+                        problem_type = line.split(":")[1].strip()  # Tipo de problema
+                    elif line.startswith("DIMENSION"):
+                        dimension = int(line.split(":")[1].strip())  # Número de cidades (dimensão)
+                    elif line.startswith("EDGE_WEIGHT_TYPE"):
+                        edge_weight_type = line.split(":")[1].strip()  # Tipo de distância (EUC_2D ou outro)
+                    elif line == "NODE_COORD_SECTION":
+                        read_coord = True
                 elif line == "EOF":
                     break  # Fim do arquivo
 
@@ -71,9 +72,7 @@ class TSP:
                         y = float(parts[2])  # Coordenada y
                         node_list.append((node_id, x, y))  # Armazena a cidade
 
-        tsp = TSP(name, comment, problem_type, dimension, edge_weight_type, node_list)
-
-        return tsp
+        return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list)
 
     @staticmethod
     def euclidean_2d_calc(node1, node2):
@@ -87,5 +86,5 @@ if __name__ == '__main__':
     file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
 
     for arquivo in file_list:
-        tsp = TSP.load_tsp(arquivo)
-        print(tsp)
+        graph = Graph.load_graph(arquivo)
+        print(graph)
