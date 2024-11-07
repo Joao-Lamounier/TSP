@@ -11,11 +11,11 @@ class TSP:
         self.dimension = int(dimension)
         self.edge_weight_type = edge_weight_type
         self.node_list = node_list
-        self.matriz = np.zeros((self.dimension, self.dimension))
+        self.graph = np.zeros((self.dimension, self.dimension))
 
         for i in range(self.dimension):
             for j in range(self.dimension):
-                self.matriz[i, j] = TSP.euclidean_2d_calc(self.node_list[i], self.node_list[j])
+                self.graph[i, j] = TSP.euclidean_2d_calc(self.node_list[i], self.node_list[j])
 
     def __str__(self):
 
@@ -28,7 +28,7 @@ class TSP:
         return s
 
     @staticmethod
-    def load_tsp(caminho_arquivo):
+    def load_tsp(file_path):
 
         name = ""
         comment = ""
@@ -37,38 +37,38 @@ class TSP:
         edge_weight_type = ""
         node_list = []
 
-        with open(caminho_arquivo, 'r') as arquivo:
+        with open(file_path, 'r') as arquivo:
             linhas = arquivo.readlines()
 
             # Encontrar onde começa a seção de coordenadas
-            lendo_coordenadas = False
-            for linha in linhas:
+            read_coord = False
+            for line in linhas:
 
-                linha = linha.strip()  # Remove espaços em branco
+                line = line.strip()  # Remove espaços em branco
 
-                if linha.startswith("NAME"):
-                    name = linha.split(":")[1].strip()  # Nome do arquivo/problema
-                elif linha.startswith("COMMENT"):
-                    comment = linha.split(":")[1].strip()  # Nome do arquivo/problema
-                elif linha.startswith("TYPE"):
-                    problem_type = linha.split(":")[1].strip()  # Tipo de problema
-                elif linha.startswith("DIMENSION"):
-                    dimension = int(linha.split(":")[1].strip())  # Número de cidades (dimensão)
-                elif linha.startswith("EDGE_WEIGHT_TYPE"):
-                    edge_weight_type = linha.split(":")[1].strip()  # Tipo de distância (EUC_2D ou outro)
+                if line.startswith("NAME"):
+                    name = line.split(":")[1].strip()  # Nome do arquivo/problema
+                elif line.startswith("COMMENT"):
+                    comment = line.split(":")[1].strip()  # Nome do arquivo/problema
+                elif line.startswith("TYPE"):
+                    problem_type = line.split(":")[1].strip()  # Tipo de problema
+                elif line.startswith("DIMENSION"):
+                    dimension = int(line.split(":")[1].strip())  # Número de cidades (dimensão)
+                elif line.startswith("EDGE_WEIGHT_TYPE"):
+                    edge_weight_type = line.split(":")[1].strip()  # Tipo de distância (EUC_2D ou outro)
 
-                if linha == "NODE_COORD_SECTION":
-                    lendo_coordenadas = True  # Começou a seção de coordenadas
-                elif linha == "EOF":
+                if line == "NODE_COORD_SECTION":
+                    read_coord = True  # Começou a seção de coordenadas
+                elif line == "EOF":
                     break  # Fim do arquivo
 
-                if lendo_coordenadas:
+                if read_coord:
                     # A linha contém as coordenadas (id, x, y)
-                    partes = linha.split()
-                    if len(partes) == 3:
-                        node_id = int(partes[0])  # ID da cidade
-                        x = float(partes[1])  # Coordenada x
-                        y = float(partes[2])  # Coordenada y
+                    parts = line.split()
+                    if len(parts) == 3:
+                        node_id = int(parts[0])  # ID da cidade
+                        x = float(parts[1])  # Coordenada x
+                        y = float(parts[2])  # Coordenada y
                         node_list.append((node_id, x, y))  # Armazena a cidade
 
         tsp = TSP(name, comment, problem_type, dimension, edge_weight_type, node_list)
@@ -83,9 +83,9 @@ class TSP:
 
 
 if __name__ == '__main__':
-    pasta = 'Benchmark'
-    lista_arquivos = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta) if arquivo.endswith('.tsp')]
+    folder = 'Benchmark'
+    file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
 
-    for arquivo in lista_arquivos:
+    for arquivo in file_list:
         tsp = TSP.load_tsp(arquivo)
         print(tsp)
