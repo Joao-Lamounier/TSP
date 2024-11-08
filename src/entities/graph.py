@@ -83,7 +83,7 @@ class Graph:
 
 
 if __name__ == '__main__':
-    folder = 'files/benchmark'
+    folder = '../files/benchmark'
     file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
 
     for arquivo in file_list:
