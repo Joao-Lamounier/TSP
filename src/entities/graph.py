@@ -1,11 +1,10 @@
 import math
-import os
 import numpy as np
 
 
 class Graph:
 
-    def __init__(self, name, comment, problem_type, dimension, edge_weight_type, node_list):
+    def __init__(self, name, comment, problem_type, dimension, edge_weight_type, node_list, start_node):
         self.name = name
         self.comment = comment
         self.problem_type = problem_type
@@ -13,6 +12,7 @@ class Graph:
         self.edge_weight_type = edge_weight_type
         self.node_list = node_list
         self.graph = np.zeros((self.dimension, self.dimension))
+        self.start_node = start_node
         self.arcs = (dimension * dimension - dimension) / 2
         self.optimal_solution = 0
 
@@ -35,12 +35,12 @@ class Graph:
 
         node_list = []
 
-        with open(file_path, 'r') as arquivo:
-            linhas = arquivo.readlines()
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
 
             # Encontrar onde começa a seção de coordenadas
             read_coord = False
-            for line in linhas:
+            for line in lines:
 
                 line = line.strip()  # Remove espaços em branco
 
@@ -69,7 +69,7 @@ class Graph:
                         y = float(parts[2])  # Coordenada y
                         node_list.append((node_id, x, y))  # Armazena a cidade
 
-        return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list)
+        return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list, None)
 
     @staticmethod
     def euclidean_2d_calc(node1, node2):
@@ -77,11 +77,17 @@ class Graph:
         y = node1[2] - node2[2]
         return math.sqrt(x * x + y * y)
 
+    def load_optimal_solution(self, file_path):
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
 
-if __name__ == '__main__':
-    folder = '../files/benchmark'
-    file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
+            for line in lines:
+                line = line.strip()
+                if line.startswith(self.name):
+                    self.optimal_solution = float(line.split()[1].strip())
+                    return
 
-    for arquivo in file_list:
-        graph = Graph.load_graph(arquivo)
-        print(graph)
+    @staticmethod
+    def gap_calc(optimal_solution, objective_function):
+        gap = 100 * (objective_function - optimal_solution) / optimal_solution
+        return gap
