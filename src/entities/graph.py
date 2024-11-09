@@ -1,5 +1,4 @@
 import math
-import os
 
 import numpy as np
 
@@ -81,11 +80,6 @@ class Graph:
         y = node1[2] - node2[2]
         return math.sqrt(x * x + y * y)
 
-
-if __name__ == '__main__':
-    folder = 'files/benchmark'
-    file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
-
-    for arquivo in file_list:
-        graph = Graph.load_graph(arquivo)
-        print(graph)
+    def add_edge(self, u, v, weight):
+        self.graph[u][v] = weight
+        self.graph[v][u] = weight
