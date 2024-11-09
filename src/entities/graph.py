@@ -1,12 +1,11 @@
 import math
-import os
 
 import numpy as np
 
 
 class Graph:
 
-    def __init__(self, name, comment, problem_type, dimension, edge_weight_type, node_list):
+    def __init__(self, name, comment, problem_type, dimension, edge_weight_type, node_list, start_node):
         self.name = name
         self.comment = comment
         self.problem_type = problem_type
@@ -14,6 +13,8 @@ class Graph:
         self.edge_weight_type = edge_weight_type
         self.node_list = node_list
         self.graph = np.zeros((self.dimension, self.dimension))
+        self.start_node = start_node
+        self.arcs = int((dimension * dimension - dimension) / 2)
 
         for i in range(self.dimension):
             for j in range(self.dimension):
@@ -38,6 +39,7 @@ class Graph:
         dimension = 0
         edge_weight_type = ""
         node_list = []
+        start_node = None
 
         with open(file_path, 'r') as arquivo:
             linhas = arquivo.readlines()
@@ -73,7 +75,7 @@ class Graph:
                         y = float(parts[2])  # Coordenada y
                         node_list.append((node_id, x, y))  # Armazena a cidade
 
-        return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list)
+        return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list, start_node)
 
     @staticmethod
     def euclidean_2d_calc(node1, node2):
@@ -81,11 +83,6 @@ class Graph:
         y = node1[2] - node2[2]
         return math.sqrt(x * x + y * y)
 
-
-if __name__ == '__main__':
-    folder = 'files/benchmark'
-    file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
-
-    for arquivo in file_list:
-        graph = Graph.load_graph(arquivo)
-        print(graph)
+    def add_edge(self, u, v, weight):
+        self.graph[u][v] = weight
+        self.graph[v][u] = weight
