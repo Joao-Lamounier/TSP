@@ -1,6 +1,5 @@
 import math
 import os
-
 import numpy as np
 
 
@@ -14,6 +13,8 @@ class Graph:
         self.edge_weight_type = edge_weight_type
         self.node_list = node_list
         self.graph = np.zeros((self.dimension, self.dimension))
+        self.arcs = (dimension * dimension - dimension) / 2
+        self.optimal_solution = 0
 
         for i in range(self.dimension):
             for j in range(self.dimension):
@@ -32,11 +33,6 @@ class Graph:
     @staticmethod
     def load_graph(file_path):
 
-        name = ""
-        comment = ""
-        problem_type = ""
-        dimension = 0
-        edge_weight_type = ""
         node_list = []
 
         with open(file_path, 'r') as arquivo:
