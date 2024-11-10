@@ -1,85 +1,94 @@
-import heapq
-import math
-from typing import List, Tuple
 
 
-class PrimPreorderMST:
+class PrimPreOrderMST:
     def __init__(self, graph):
-        """Inicializa o problema TSP com o grafo fornecido."""
+        """
+        Inicializa o objeto PrimPreOrderMST com um grafo fornecido.
+
+        Argumentos:
+            graph (Graph): O grafo para calcular a Árvore Geradora Mínima (MST).
+        """
         self.graph = graph
-        self.dimension = graph.dimension
-        self.visited = [False] * self.dimension
-        self.total_cost = 0
+        self.mst = [[] for _ in range(graph.dimension)]
+        self.visited = [False] * graph.dimension
         self.path = []
+        self.total_cost = 0.0
+        self.run_time = 0.0
 
-    def _prim_algorithm(self) -> List[Tuple[int, int]]:
+    def _find_min_edge(self, selected: list, num_nodes: int) -> tuple:
         """
-        Executa o algoritmo de Prim para encontrar a árvore geradora mínima (MST).
+        Função auxiliar para encontrar a aresta mínima que conecta um nó selecionado
+        a um nó não selecionado.
 
-        Retorna uma lista de arestas (u, v) que pertencem à MST.
+        Argumentos:
+            selected (list): Lista de nós selecionados.
+            num_nodes (int): O número total de nós no grafo.
+
+        Retorna:
+            tuple: Uma tupla no formato (u, v, peso) representando a aresta com o
+                   menor peso conectando nós selecionados a não selecionados.
         """
-        key = [math.inf] * self.dimension
-        parent = [-1] * self.dimension
-        key[self.graph.start_node] = 0  # Começa com custo zero para o nó inicial escolhido
+        min_edge = (None, None, float('inf'))
+        for u in range(num_nodes):
+            if selected[u]:
+                for v in range(num_nodes):
+                    if not selected[v] and self.graph.graph[u][v] < min_edge[2]:
+                        min_edge = (u, v, self.graph.graph[u][v])
+        return min_edge
 
-        # Fila de prioridade com heapq
-        min_heap = [(0, self.graph.start_node)]  # (custo, cidade)
-        heapq.heapify(min_heap)
-
-        while min_heap:
-            _, u = heapq.heappop(min_heap)
-
-            if self.visited[u]:
-                continue
-            self.visited[u] = True
-
-            # Atualiza os vizinhos de u
-            for v in range(self.dimension):
-                edge_cost = self.graph.graph[u][v]
-                if not self.visited[v] and edge_cost < key[v]:
-                    key[v] = edge_cost
-                    parent[v] = u
-                    heapq.heappush(min_heap, (key[v], v))
-
-        # Gera a lista de arestas da árvore geradora mínima
-        mst_edges = [(parent[v], v) for v in range(1, self.dimension)]
-        self.total_cost = sum(self.graph.graph[parent[v]][v] for v in range(1, self.dimension))
-
-        return mst_edges
-
-    def _preorder_traversal(self, node: int, mst_edges: List[Tuple[int, int]]) -> None:
+    def prim_mst(self):
         """
-        Realiza uma busca em pré-ordem sobre a árvore geradora mínima e calcula o caminho TSP.
+        Calcula a Árvore Geradora Mínima (MST) usando o algoritmo de Prim.
+        """
+        num_nodes = self.graph.dimension
+        selected = [False] * num_nodes
+        selected[0] = True  # Começa a partir do nó 0
 
-        Atualiza a lista de 'path' com a ordem dos nós visitados.
+        for _ in range(num_nodes - 1):
+            u, v, weight = self._find_min_edge(selected, num_nodes)
+            if u is not None and v is not None:
+                selected[v] = True
+                self.mst[u].append(v)
+                self.mst[v].append(u)
+
+    def _dfs_pre_order(self, node: int, path: list):
+        """
+        Realiza uma busca em profundidade (DFS) em pré-ordem na MST.
+
+        Argumentos:
+            node (int): O nó atual para começar a busca DFS.
+            path (list): A lista para armazenar os nós visitados na ordem.
         """
         self.visited[node] = True
-        self.path.append(node)
+        path.append(node)
+        for neighbor in self.mst[node]:
+            if not self.visited[neighbor]:
+                self._dfs_pre_order(neighbor, path)
 
-        for u, v in mst_edges:
-            # Verifica as arestas adjacentes para o nó atual
-            if u == node and not self.visited[v]:
-                self._preorder_traversal(v, mst_edges)
-            elif v == node and not self.visited[u]:
-                self._preorder_traversal(u, mst_edges)
-
-    def solve_tsp(self) -> Tuple[List[int], float]:
+    def approximate_tsp(self) -> list:
         """
-        Resolve o problema do Caixeiro Viajante (TSP) usando o algoritmo de Prim e busca em pré-ordem.
+        Calcula uma aproximação do TSP usando a MST de Prim e a DFS em pré-ordem.
 
-        Retorna o caminho (sequência de cidades) e o custo total do ciclo TSP.
+        Retorna:
+            list: O caminho aproximado do TSP.
         """
-        # Executa o algoritmo de Prim para encontrar a árvore geradora mínima
-        mst_edges = self._prim_algorithm()
+        self.prim_mst()
+        path = []
+        self._dfs_pre_order(0, path)
+        path.append(0)  # Fechando o ciclo
+        self.path = path
+        return path
 
-        # Limpa o estado para a busca em pré-ordem
-        self.visited = [False] * self.dimension
-        self.path = []
-        self._preorder_traversal(0, mst_edges)
+    def total_cost_calc(self) -> float:
+        """
+        Calcula o custo total do caminho aproximado do TSP.
 
-        # Cálculo do custo total do ciclo TSP
-        tsp_cost = self.total_cost
-        # Adiciona o retorno ao ponto de partida
-        tsp_cost += self.graph.graph[self.path[-1]][self.path[0]]
+        Retorna:
+            float: O custo total do caminho aproximado do TSP.
+        """
 
-        return self.path, tsp_cost
+        total_cost = 0
+        for i in range(len(self.path) - 1):
+            total_cost += self.graph.graph[self.path[i], self.path[i + 1]]
+
+        return total_cost

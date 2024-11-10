@@ -1,6 +1,4 @@
 import math
-import os
-
 import numpy as np
 
 
@@ -15,8 +13,8 @@ class Graph:
         self.node_list = node_list
         self.graph = np.zeros((self.dimension, self.dimension))
         self.start_node = start_node
-        self.arcs = (dimension * dimension - dimension) / 2
-        self.optimal_solution = 0
+        self.arcs = int((dimension * dimension - dimension) / 2)
+        self.optimal_solution = 0.0
 
         for i in range(self.dimension):
             for j in range(self.dimension):
@@ -35,13 +33,7 @@ class Graph:
     @staticmethod
     def load_graph(file_path):
 
-        name = ""
-        comment = ""
-        problem_type = ""
-        dimension = 0
-        edge_weight_type = ""
         node_list = []
-        start_node = None
 
         with open(file_path, 'r') as f:
             lines = f.readlines()
@@ -77,7 +69,7 @@ class Graph:
                         y = float(parts[2])  # Coordenada y
                         node_list.append((node_id, x, y))  # Armazena a cidade
 
-        return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list, None)
+        return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list, start_node=0)
 
     @staticmethod
     def euclidean_2d_calc(node1, node2):
@@ -85,17 +77,17 @@ class Graph:
         y = node1[2] - node2[2]
         return math.sqrt(x * x + y * y)
 
-    def load_optimal_solution(self, file_path):
-        with open(file_path, 'r') as f:
-            lines = f.readlines()
-
-            for line in lines:
-                line = line.strip()
-                if line.startswith(self.name):
-                    self.optimal_solution = float(line.split()[1].strip())
-                    return
-
     @staticmethod
     def gap_calc(optimal_solution, objective_function):
         gap = 100 * (objective_function - optimal_solution) / optimal_solution
         return gap
+
+    # def load_optimal_solution(self, file_path):
+    #     with open(file_path, 'r') as f:
+    #         lines = f.readlines()
+    #
+    #         for line in lines:
+    #             line = line.strip()
+    #             if line.startswith(self.name):
+    #                 self.optimal_solution = float(line.split()[1].strip())
+    #                 return

@@ -1,12 +1,13 @@
 from src.entities.graph import Graph
 from heuristics.NearestNeighbor import NearestNeighbor
-from heuristics.PrimPreOrderMST import PrimPreOrderMST
+
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 from time import perf_counter
 
 from src.heuristics.Christofides import Christofides
+from src.heuristics.PrimPreorderMST import PrimPreOrderMST
 
 
 class Graphic:
@@ -72,10 +73,6 @@ if __name__ == '__main__':
         path_mst = mst.approximate_tsp()
         fim_2 = perf_counter()
 
-        christ = Christofides(graph)
-        inicio_3 = perf_counter()
-        path_c, solution_c = christ.solve_tsp()
-        fim_3 = perf_counter()
 
         total = 0.0
         for i in range(len(path_mst) - 1):
@@ -98,12 +95,13 @@ if __name__ == '__main__':
         )
 
         print(
-            f'NAME: {graph.name: <10} CHRIS: {solution_c: <20} BEST: {graph.optimal_solution: <10}'
-            f' RUN_TIME: {fim_3 - inicio_3: <25} GAP: {Graph.gap_calc(graph.optimal_solution, solution_c)}'
+            f'NAME: {graph.name: <10} MST: {mst.total_cost: <20} BEST: {graph.optimal_solution: <10}'
+            f' RUN_TIME: {fim_2 - inicio_2: <25} GAP: {Graph.gap_calc(graph.optimal_solution, mst.total_cost)}'
         )
+
 
 
     nn = Graphic('NN', run_time)
     mst = Graphic('MST', run_time_2)
-    christ = Graphic('CHRIST', run_time_3)
-    Graphic.plot_graphic(nn, mst, christ)
+    ins = Graphic('INS', run_time_3)
+    Graphic.plot_graphic(nn, mst, ins)

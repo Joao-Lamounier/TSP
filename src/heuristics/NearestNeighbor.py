@@ -1,13 +1,9 @@
-from src.entities.graph import Graph
-from time import perf_counter
-import os
+
 
 class NearestNeighbor:
 
     def __init__(self, graph):
         """Inicializa o problema TSP com o grafo fornecido."""
-        if not isinstance(graph, Graph):
-            raise TypeError("O parâmetro 'graph' deve ser uma instância da classe Graph.")
 
         self.graph = graph
         self.path = []
@@ -50,35 +46,35 @@ class NearestNeighbor:
         return self.total_cost
 
 
-if __name__ == '__main__':
-
-    folder = '../files/benchmark'
-    file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
-
-    gap_list = []
-    total = 0.0
-    result = 0.0
-    for arquivo in file_list:
-
-        graph = Graph.load_graph(arquivo)
-        graph.load_optimal_solution('../optimal_solutions.txt')
-
-        for i in range(graph.dimension):
-
-            begin = perf_counter()
-            tsp_solver = NearestNeighbor(graph)
-            tsp_solver.graph.start_node = i
-            solution_weight = tsp_solver.solve_nearest_neighbor()
-            end = perf_counter()
-
-            gap_list.append(Graph.gap_calc(graph.optimal_solution, solution_weight))
-            total += Graph.gap_calc(graph.optimal_solution, solution_weight)
-
-        # print(
-        #     f'NAME: {graph.name: <10} NN: {solution_weight: <20} BEST: {graph.optimal_solution: <10}'
-        #     f' RUN_TIME: {end - begin: <25} GAP: {Graph.gap_calc(graph.optimal_solution, solution_weight)}'
-        # )
-
-        result = total/len(gap_list)
-
-    print(result)
+# if __name__ == '__main__':
+#
+#     folder = '../files/benchmark'
+#     file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
+#
+#     gap_list = []
+#     total = 0.0
+#     result = 0.0
+#     for arquivo in file_list:
+#
+#         graph = Graph.load_graph(arquivo)
+#         graph.load_optimal_solution('../optimal_solutions.txt')
+#
+#         for i in range(graph.dimension):
+#
+#             begin = perf_counter()
+#             tsp_solver = NearestNeighbor(graph)
+#             tsp_solver.graph.start_node = i
+#             solution_weight = tsp_solver.solve_nearest_neighbor()
+#             end = perf_counter()
+#
+#             gap_list.append(Graph.gap_calc(graph.optimal_solution, solution_weight))
+#             total += Graph.gap_calc(graph.optimal_solution, solution_weight)
+#
+#         # print(
+#         #     f'NAME: {graph.name: <10} NN: {solution_weight: <20} BEST: {graph.optimal_solution: <10}'
+#         #     f' RUN_TIME: {end - begin: <25} GAP: {Graph.gap_calc(graph.optimal_solution, solution_weight)}'
+#         # )
+#
+#         result = total/len(gap_list)
+#
+#     print(result)
