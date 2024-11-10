@@ -20,7 +20,7 @@ class PrimPreorderMST:
         """
         key = [math.inf] * self.dimension
         parent = [-1] * self.dimension
-        key[0] = self.graph.start_node  # Começa pela primeira cidade
+        key[self.graph.start_node] =  0 # Começa com custo zero para o nó inicial escolhido
 
         # Fila de prioridade com heapq
         min_heap = [(0, 0)]  # (custo, cidade)
