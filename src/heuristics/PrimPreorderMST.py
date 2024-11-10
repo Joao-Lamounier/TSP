@@ -79,7 +79,7 @@ class PrimPreOrderMST:
         self.path = path
         return path
 
-    def total_cost_calc(self) -> float:
+    def calc_total_cost(self) -> float:
         """
         Calcula o custo total do caminho aproximado do TSP.
 
