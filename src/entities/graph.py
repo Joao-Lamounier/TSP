@@ -1,4 +1,6 @@
 import math
+import os
+
 import numpy as np
 
 
@@ -33,7 +35,13 @@ class Graph:
     @staticmethod
     def load_graph(file_path):
 
+        name = ""
+        comment = ""
+        problem_type = ""
+        dimension = 0
+        edge_weight_type = ""
         node_list = []
+        start_node = None
 
         with open(file_path, 'r') as f:
             lines = f.readlines()
