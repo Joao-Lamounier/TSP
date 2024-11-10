@@ -1,10 +1,7 @@
-from src.entities.graph import Graph
-import os
-from time import perf_counter
 
 
 class PrimPreOrderMST:
-    def __init__(self, graph: Graph):
+    def __init__(self, graph):
         """
         Inicializa o objeto PrimPreOrderMST com um grafo fornecido.
 
@@ -14,7 +11,9 @@ class PrimPreOrderMST:
         self.graph = graph
         self.mst = [[] for _ in range(graph.dimension)]
         self.visited = [False] * graph.dimension
+        self.path = []
         self.total_cost = 0.0
+        self.run_time = 0.0
 
     def _find_min_edge(self, selected: list, num_nodes: int) -> tuple:
         """
@@ -77,34 +76,19 @@ class PrimPreOrderMST:
         path = []
         self._dfs_pre_order(0, path)
         path.append(0)  # Fechando o ciclo
+        self.path = path
         return path
 
+    def calc_total_cost(self) -> float:
+        """
+        Calcula o custo total do caminho aproximado do TSP.
 
-if __name__ == '__main__':
+        Retorna:
+            float: O custo total do caminho aproximado do TSP.
+        """
 
-    folder = '../files/benchmark'
-    file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
+        total_cost = 0
+        for i in range(len(self.path) - 1):
+            total_cost += self.graph.graph[self.path[i], self.path[i + 1]]
 
-    for arquivo in file_list:
-        graph = Graph.load_graph(arquivo)
-        graph.load_optimal_solution('../optimal_solutions.txt')
-        graph.start_node = 0
-
-        tsp_solver = PrimPreOrderMST(graph)
-        begin = perf_counter()
-        solution_path = tsp_solver.approximate_tsp()
-        end = perf_counter()
-
-        print((solution_path))
-
-        total = 0.0
-        for i in range(len(solution_path) - 1):
-            total += graph.graph[solution_path[i], solution_path[i + 1]]
-
-        # print(total)
-
-        print(
-            f'NAME: {graph.name: <10} MST: {total: <20} BEST: {graph.optimal_solution: <10}'
-            f' RUN_TIME: {end - begin: <25} GAP: {Graph.gap_calc(graph.optimal_solution, total)}'
-        )
-
+        return total_cost
