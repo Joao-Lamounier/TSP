@@ -1,85 +1,120 @@
-import math
+import os
+from time import perf_counter
+
+from src.entities.graph import Graph
+
+
 import heapq
-from typing import List, Tuple
 
 
-class PrimPreorderMST:
+class PrimPreOrderMST:
+
     def __init__(self, graph):
-        """Inicializa o problema TSP com o grafo fornecido."""
+        """
+        Inicializa a estrutura com o grafo fornecido.
+
+        Args:
+            graph (Graph): Objeto do grafo contendo a matriz de adjacência e a dimensão.
+        """
         self.graph = graph
-        self.dimension = graph.dimension
-        self.visited = [False] * self.dimension
-        self.total_cost = 0
-        self.path = []
+        self.mst = [[] for _ in range(graph.dimension)]
+        self.visited = [False] * graph.dimension
+        self.start_node = graph.start_node  # Nó inicial
 
-    def _prim_algorithm(self) -> List[Tuple[int, int]]:
+    def _prim_mst(self):
         """
-        Executa o algoritmo de Prim para encontrar a árvore geradora mínima (MST).
-
-        Retorna uma lista de arestas (u, v) que pertencem à MST.
+        Calcula a Árvore Geradora Mínima (MST) utilizando o algoritmo de Prim
+        e armazena o resultado como uma lista de adjacências.
         """
-        key = [math.inf] * self.dimension
-        parent = [-1] * self.dimension
-        key[0] = self.graph.start_node  # Começa pela primeira cidade
+        num_nodes = self.graph.dimension
+        selected = [False] * num_nodes
+        selected[self.start_node] = True  # Usa o nó inicial fornecido
 
-        # Fila de prioridade com heapq
-        min_heap = [(0, 0)]  # (custo, cidade)
-        heapq.heapify(min_heap)
+        for _ in range(num_nodes - 1):
+            min_edge = (None, None, float('inf'))
+            for u in range(num_nodes):
+                if selected[u]:
+                    for v in range(num_nodes):
+                        weight = self.graph.graph[u][v]
+                        if not selected[v] and weight < min_edge[2]:
+                            min_edge = (u, v, weight)
 
-        while min_heap:
-            _, u = heapq.heappop(min_heap)
+            u, v, weight = min_edge
+            if u is not None and v is not None:
+                selected[v] = True
+                self.mst[u].append(v)
+                self.mst[v].append(u)
 
-            if self.visited[u]:
-                continue
-            self.visited[u] = True
-
-            # Atualiza os vizinhos de u
-            for v in range(self.dimension):
-                edge_cost = self.graph.graph[u][v]
-                if not self.visited[v] and edge_cost < key[v]:
-                    key[v] = edge_cost
-                    parent[v] = u
-                    heapq.heappush(min_heap, (key[v], v))
-
-        # Gera a lista de arestas da árvore geradora mínima
-        mst_edges = [(parent[v], v) for v in range(1, self.dimension)]
-        self.total_cost = sum(self.graph.graph[parent[v]][v] for v in range(1, self.dimension))
-
-        return mst_edges
-
-    def _preorder_traversal(self, node: int, mst_edges: List[Tuple[int, int]]) -> None:
+    def _pre_order_dfs(self, node, path):
         """
-        Realiza uma busca em pré-ordem sobre a árvore geradora mínima e calcula o caminho TSP.
+        Realiza uma busca em profundidade (DFS) na MST para gerar a ordem pré-ordem.
 
-        Atualiza a lista de 'path' com a ordem dos nós visitados.
+        Args:
+            node (int): Nó atual da DFS.
+            path (list): Caminho percorrido na DFS.
         """
         self.visited[node] = True
-        self.path.append(node)
+        path.append(node)
+        for neighbor in self.mst[node]:
+            if not self.visited[neighbor]:
+                self._pre_order_dfs(neighbor, path)
 
-        for u, v in mst_edges:
-            # Verifica as arestas adjacentes para o nó atual
-            if u == node and not self.visited[v]:
-                self._preorder_traversal(v, mst_edges)
-            elif v == node and not self.visited[u]:
-                self._preorder_traversal(u, mst_edges)
-
-    def solve_tsp(self) -> Tuple[List[int], float]:
+    def approximate_tsp(self):
         """
-        Resolve o problema do Caixeiro Viajante (TSP) usando o algoritmo de Prim e busca em pré-ordem.
+        Gera uma solução aproximada para o TSP.
 
-        Retorna o caminho (sequência de cidades) e o custo total do ciclo TSP.
+        Returns:
+            list: Caminho aproximado que resolve o TSP.
         """
-        # Executa o algoritmo de Prim para encontrar a árvore geradora mínima
-        mst_edges = self._prim_algorithm()
+        self._prim_mst()
+        path = []
+        self._pre_order_dfs(self.start_node, path)  # Usa o nó inicial fornecido
+        path.append(self.start_node)  # Fechando o ciclo
+        self._two_opt(path)
+        return path
 
-        # Limpa o estado para a busca em pré-ordem
-        self.visited = [False] * self.dimension
-        self.path = []
-        self._preorder_traversal(0, mst_edges)
+    def _two_opt(self, path):
+        """
+        Realiza a otimização 2-Opt no caminho para melhorar a solução aproximada do TSP.
 
-        # Cálculo do custo total do ciclo TSP
-        tsp_cost = self.total_cost
-        # Adiciona o retorno ao ponto de partida
-        tsp_cost += self.graph.graph[self.path[-1]][self.path[0]]
+        Args:
+            path (list): Caminho aproximado do TSP.
+        """
+        improved = True
+        while improved:
+            improved = False
+            for i in range(1, len(path) - 2):
+                for j in range(i + 1, len(path) - 1):
+                    if self._swap_cost_benefit(path, i, j):
+                        path[i:j + 1] = reversed(path[i:j + 1])
+                        improved = True
 
-        return self.path, tsp_cost
+    def _swap_cost_benefit(self, path, i, j):
+        """
+        Verifica se a troca 2-Opt entre dois segmentos resulta em um menor custo.
+
+        Args:
+            path (list): Caminho atual do TSP.
+            i (int): Índice inicial do primeiro segmento.
+            j (int): Índice final do segundo segmento.
+
+        Returns:
+            bool: True se a troca reduz o custo; False caso contrário.
+        """
+        return (self._edge_cost(path[i - 1], path[i]) + self._edge_cost(path[j], path[j + 1]) >
+                self._edge_cost(path[i - 1], path[j]) + self._edge_cost(path[i], path[j + 1]))
+
+    def _edge_cost(self, u, v):
+        """
+        Retorna o custo da aresta entre dois nós.
+
+        Args:
+            u (int): Nó de origem.
+            v (int): Nó de destino.
+
+        Returns:
+            float: Custo da aresta entre u e v.
+        """
+        return self.graph.graph[u][v]
+
+
