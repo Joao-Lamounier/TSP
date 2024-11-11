@@ -15,7 +15,7 @@ def main():
     parser.add_argument("best_known_solution", type=float, help="Melhor solução conhecida para a instância")
     parser.add_argument("heuristic", type=str, choices=["MST", "NN", "INS"],
                         help="Heurística a ser usada (MST, NN, INS)")
-    parser.add_argument("start_node", type=int, help="Nó de início (opcional, padrão: 0)")
+    parser.add_argument("start_node", type=int, help="Nó de início")
 
     args = parser.parse_args()
 
