@@ -1,5 +1,3 @@
-
-
 class PrimPreOrderMST:
     def __init__(self, graph):
         """
@@ -65,19 +63,16 @@ class PrimPreOrderMST:
             if not self.visited[neighbor]:
                 self._dfs_pre_order(neighbor, path)
 
-    def approximate_tsp(self) -> list:
+    def solve_prim_pre_order_mst(self):
         """
         Calcula uma aproximação do TSP usando a MST de Prim e a DFS em pré-ordem.
-
-        Retorna:
-            list: O caminho aproximado do TSP.
         """
         self.prim_mst()
         path = []
         self._dfs_pre_order(0, path)
         path.append(0)  # Fechando o ciclo
         self.path = path
-        return path
+        self.total_cost = self.calc_total_cost()
 
     def calc_total_cost(self) -> float:
         """
