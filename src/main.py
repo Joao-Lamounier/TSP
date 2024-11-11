@@ -10,12 +10,19 @@ from entities.graph import Graph
 def main():
     # Configuração dos argumentos de linha de comando
     parser = argparse.ArgumentParser(description="Solucionador TSP usando heurísticas")
+
+    # Argumentos principais
     parser.add_argument("input_file", type=str, help="Caminho para o arquivo de entrada .tsp")
     parser.add_argument("output_file", type=str, help="Caminho para o arquivo de saída dos resultados")
     parser.add_argument("best_known_solution", type=float, help="Melhor solução conhecida para a instância")
-    parser.add_argument("heuristic", type=str, choices=["MST", "NN", "INS"], help="Heurística a ser usada (MST, NN, INS)")
-    parser.add_argument("--start_node", type=int, default=0, help="Nó de início (opcional, padrão: 0)")
+    parser.add_argument("heuristic", type=str, choices=["MST", "NN", "INS"],
+                        help="Heurística a ser usada (MST, NN, INS)")
 
+    # Argumento opcional para o número de iterações
+    parser.add_argument("iterations", type=int, help="Número de iterações para a heurística")
+
+    # Argumento opcional para o nó de início
+    parser.add_argument("--start_node", type=int, default=0, help="Nó de início (opcional, padrão: 0)")
     args = parser.parse_args()
 
     # Carregamento do grafo a partir do arquivo de entrada
