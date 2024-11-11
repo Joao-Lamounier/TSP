@@ -1,7 +1,7 @@
 import argparse
 import os
 from time import perf_counter
-from heuristics.PrimPreorderMST import PrimPreOrderMST
+from heuristics.PrimPreOrderMST import PrimPreOrderMST
 from heuristics.NearestNeighbor import NearestNeighbor
 from heuristics.Insertion import Insertion
 from entities.graph import Graph
@@ -33,7 +33,7 @@ def main():
 
         tsp_solver.approximate_tsp()
 
-        cost = tsp_solver.total_cost_calc()
+        cost = tsp_solver.calc_total_cost()
 
     elif args.heuristic == "NN":
         tsp_solver = NearestNeighbor(graph)

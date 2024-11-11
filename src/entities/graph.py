@@ -82,12 +82,12 @@ class Graph:
         gap = 100 * (objective_function - optimal_solution) / optimal_solution
         return gap
 
-    # def load_optimal_solution(self, file_path):
-    #     with open(file_path, 'r') as f:
-    #         lines = f.readlines()
-    #
-    #         for line in lines:
-    #             line = line.strip()
-    #             if line.startswith(self.name):
-    #                 self.optimal_solution = float(line.split()[1].strip())
-    #                 return
+    def load_optimal_solution(self, file_path):
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+
+            for line in lines:
+                line = line.strip()
+                if line.startswith(self.name):
+                    self.optimal_solution = float(line.split()[1].strip())
+                    return
