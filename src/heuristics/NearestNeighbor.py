@@ -41,7 +41,7 @@ class NearestNeighbor:
 
         # Retorna ao nó inicial para completar o ciclo
         self.total_cost += self.graph.graph[current_node, self.graph.start_node]
-        self.path.append(self.graph.start_node)
+        # self.path.append(self.graph.start_node)
 
         return self.total_cost
 

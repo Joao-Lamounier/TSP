@@ -4,11 +4,11 @@ from heuristics.NearestNeighbor import NearestNeighbor
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from time import perf_counter
-import scipy.stats as stats
-
-from src.heuristics.Insertion import Insertion
-from src.heuristics.PrimPreOrderMST import PrimPreOrderMST
+# from time import perf_counter
+# import scipy.stats as stats
+#
+# from src.heuristics.Insertion import Insertion
+# from src.heuristics.PrimPreOrderMST import PrimPreOrderMST
 
 
 class Graphic:
@@ -70,9 +70,12 @@ if __name__ == '__main__':
         graph = Graph.load_graph(arquivo)
         graph.load_optimal_solution('optimal_solutions.txt')
 
-        for i in range(graph.dimension):
+        nn = NearestNeighbor(graph)
+        nn.solve_nearest_neighbor()
 
-            graph.start_node = i
+        # for i in range(graph.dimension):
+        #
+        #     graph.start_node = i
 
             # nn = NearestNeighbor(graph)
             # inicio = perf_counter()
@@ -93,9 +96,9 @@ if __name__ == '__main__':
             # mst.total_cost = total
 
             # inicio_3 = perf_counter()
-            ins = Insertion(graph)
-            ins.solve()
-            cost = ins.total_cost
+            # ins = Insertion(graph)
+            # ins.solve()
+            # cost = ins.total_cost
             # fim_3 = perf_counter()
             # ins.run_time = fim_3 - inicio_3
 
@@ -105,12 +108,12 @@ if __name__ == '__main__':
 
             # gap_list.append(Graph.gap_calc(nn.graph.optimal_solution, nn.total_cost))
             # gap_list_2.append(Graph.gap_calc(mst.graph.optimal_solution, mst.total_cost))
-            gap_list_3.append(Graph.gap_calc(ins.graph.optimal_solution, ins.total_cost))
+            # gap_list_3.append(Graph.gap_calc(ins.graph.optimal_solution, ins.total_cost))
 
-        # print(
-        #     f'NAME: {graph.name: <10} NN: {nn.total_cost: <20} BEST: {graph.optimal_solution: <10}'
-        #     f' RUN_TIME: {nn.run_time: <25} GAP: {Graph.gap_calc(graph.optimal_solution, nn.total_cost)}'
-        # )
+        print(
+            f'NAME: {graph.name: <10} NN: {nn.total_cost: <20} BEST: {graph.optimal_solution: <10}'
+            f' RUN_TIME: {nn.run_time: <25} GAP: {Graph.gap_calc(graph.optimal_solution, nn.total_cost)}'
+        )
         #
         # print(
         #     f'NAME: {graph.name: <10} MST: {mst.total_cost: <20} BEST: {graph.optimal_solution: <10}'
@@ -182,29 +185,29 @@ if __name__ == '__main__':
     # print(np.mean(gap_list_3))
 
     # Passo 1: Calcular a média amostral (x̄)
-    mean_gap = np.mean(gap_list_3)
-
-    # Passo 2: Calcular o desvio padrão amostral (s)
-    std_gap = np.std(gap_list_3, ddof=1)  # ddof=1 para calcular o desvio padrão amostral
-
-    # Passo 3: Calcular o número de amostras (n)
-    n = len(gap_list_3)
-
-    # Passo 4: Encontrar o valor crítico t para um intervalo de confiança de 95%
-    confidence_level = 0.95
-    alpha = 1 - confidence_level
-    t_critical = stats.t.ppf(1 - alpha / 2, df=n - 1)  # t crítico para 95% e n-1 graus de liberdade
-
-    # Passo 5: Calcular o erro padrão da média
-    standard_error = std_gap / np.sqrt(n)
-
-    # Passo 6: Calcular o intervalo de confiança
-    margin_of_error = t_critical * standard_error
-    confidence_interval = (mean_gap - margin_of_error, mean_gap + margin_of_error)
-
-    # Exibir os resultados
-    print('Insertion', n)
-    print(f"Média do Gap: {mean_gap}")
-    print(f"Desvio padrão amostral: {std_gap}")
-    print(f"Valor crítico t (95% de confiança): {t_critical}")
-    print(f"Erro padrão da média: {standard_error}")
+    # mean_gap = np.mean(gap_list_3)
+    #
+    # # Passo 2: Calcular o desvio padrão amostral (s)
+    # std_gap = np.std(gap_list_3, ddof=1)  # ddof=1 para calcular o desvio padrão amostral
+    #
+    # # Passo 3: Calcular o número de amostras (n)
+    # n = len(gap_list_3)
+    #
+    # # Passo 4: Encontrar o valor crítico t para um intervalo de confiança de 95%
+    # confidence_level = 0.95
+    # alpha = 1 - confidence_level
+    # t_critical = stats.t.ppf(1 - alpha / 2, df=n - 1)  # t crítico para 95% e n-1 graus de liberdade
+    #
+    # # Passo 5: Calcular o erro padrão da média
+    # standard_error = std_gap / np.sqrt(n)
+    #
+    # # Passo 6: Calcular o intervalo de confiança
+    # margin_of_error = t_critical * standard_error
+    # confidence_interval = (mean_gap - margin_of_error, mean_gap + margin_of_error)
+    #
+    # # Exibir os resultados
+    # print('Insertion', n)
+    # print(f"Média do Gap: {mean_gap}")
+    # print(f"Desvio padrão amostral: {std_gap}")
+    # print(f"Valor crítico t (95% de confiança): {t_critical}")
+    # print(f"Erro padrão da média: {standard_error}")

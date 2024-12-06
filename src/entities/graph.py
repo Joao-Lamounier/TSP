@@ -91,3 +91,11 @@ class Graph:
                 if line.startswith(self.name):
                     self.optimal_solution = float(line.split()[1].strip())
                     return
+
+    def path_length(self, path):
+        """Calculate the total length of a path."""
+        n = len(path)
+        length = self.graph[path[-1]][path[0]]
+        for i in range(n - 1):
+            length += self.graph[path[i]][path[i + 1]]
+        return length
