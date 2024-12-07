@@ -45,8 +45,8 @@ import matplotlib.pyplot as plt
 
 class ConfidenceInterval:
 
-    def __init__(self):
-        self.gaps = []
+    def __init__(self, gaps):
+        self.gaps = gaps
         self.media = np.mean(self.gaps)
 
     @staticmethod

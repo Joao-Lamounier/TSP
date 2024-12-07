@@ -1,14 +1,15 @@
 class Insertion:
 
-    def __init__(self, graph):
+    def __init__(self, graph, start_node):
         self.graph = graph
         self.path = []
         self.total_cost = 0.0
         self.runtime = 0.0
+        self.start_node = start_node
 
     def solve_insertion(self):
         # Inicia-se a partir do nó inicial (start_node)
-        start_node = self.graph.start_node
+        start_node = self.start_node
         self.path = [start_node]
         nodes = list(range(self.graph.dimension))
         nodes.remove(start_node)  # Remove o nó inicial da lista de nós
@@ -44,7 +45,3 @@ class Insertion:
             self.path.insert(best_position, best_node)
             self.total_cost += best_increase
             nodes.remove(best_node)
-
-        # Retorna ao início para completar o ciclo
-        # self.total_cost += self.graph.graph[self.path[-1], self.path[0]]
-        # self.path.append(self.graph.start_node)

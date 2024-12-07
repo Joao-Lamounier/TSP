@@ -1,5 +1,5 @@
 class PrimPreOrderMST:
-    def __init__(self, graph):
+    def __init__(self, graph, start_node):
         """
         Inicializa o objeto PrimPreOrderMST com um grafo fornecido.
 
@@ -12,6 +12,7 @@ class PrimPreOrderMST:
         self.path = []
         self.total_cost = 0.0
         self.run_time = 0.0
+        self.start_node = start_node
 
     def _find_min_edge(self, selected: list, num_nodes: int) -> tuple:
         """
@@ -70,7 +71,7 @@ class PrimPreOrderMST:
         self.prim_mst()
         path = []
         self._dfs_pre_order(0, path)
-        # path.append(0)  # Fechando o ciclo
+        path.append(0)  # Fechando o ciclo
         self.path = path
         self.total_cost = self.calc_total_cost()
 
@@ -82,8 +83,8 @@ class PrimPreOrderMST:
             float: O custo total do caminho aproximado do TSP.
         """
 
-        n = len(self.path)
-        length = self.graph[self.path[-1]][self.path[0]]
-        for i in range(n - 1):
-            length += self.graph[self.path[i]][self.path[i + 1]]
-        return length
+        total_cost = 0
+        for i in range(len(self.path) - 1):
+            total_cost += self.graph.graph[self.path[i], self.path[i + 1]]
+
+        return total_cost

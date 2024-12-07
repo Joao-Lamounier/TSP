@@ -4,7 +4,7 @@ import numpy as np
 
 class Graph:
 
-    def __init__(self, name, comment, problem_type, dimension, edge_weight_type, node_list, start_node):
+    def __init__(self, name, comment, problem_type, dimension, edge_weight_type, node_list):
         self.name = name
         self.comment = comment
         self.problem_type = problem_type
@@ -12,23 +12,12 @@ class Graph:
         self.edge_weight_type = edge_weight_type
         self.node_list = node_list
         self.graph = np.zeros((self.dimension, self.dimension))
-        self.start_node = start_node
         self.arcs = int((dimension * dimension - dimension) / 2)
         self.optimal_solution = 0.0
 
         for i in range(self.dimension):
             for j in range(self.dimension):
                 self.graph[i, j] = Graph.euclidean_2d_calc(self.node_list[i], self.node_list[j])
-
-    def __str__(self):
-
-        s = (f'NAME: {self.name}\nCOMMENT: {self.comment}\nTYPE: {self.problem_type}\nDIMENSION: {self.dimension}'
-             f'\nEDGE_WEIGHT_TYPE: {self.edge_weight_type}\nNODE_COORD_SECTION\n')
-
-        for node in self.node_list:
-            s += f'Node {node[0]}: ({node[1]}, {node[2]})\n'
-
-        return s
 
     @staticmethod
     def load_graph(file_path):
@@ -69,18 +58,13 @@ class Graph:
                         y = float(parts[2])  # Coordenada y
                         node_list.append((node_id, x, y))  # Armazena a cidade
 
-        return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list, start_node=0)
+        return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list)
 
     @staticmethod
     def euclidean_2d_calc(node1, node2):
         x = node1[1] - node2[1]
         y = node1[2] - node2[2]
         return math.sqrt(x * x + y * y)
-
-    @staticmethod
-    def gap_calc(optimal_solution, objective_function):
-        gap = 100 * (objective_function - optimal_solution) / optimal_solution
-        return gap
 
     def load_optimal_solution(self, file_path):
         with open(file_path, 'r') as f:
@@ -92,10 +76,10 @@ class Graph:
                     self.optimal_solution = float(line.split()[1].strip())
                     return
 
-    def path_length(self, path):
-        """Calculate the total length of a path."""
-        n = len(path)
-        length = self.graph[path[-1]][path[0]]
-        for i in range(n - 1):
-            length += self.graph[path[i]][path[i + 1]]
-        return length
+    # def path_length(self, path):
+    #     """Calculate the total length of a path."""
+    #     n = len(path)
+    #     length = self.graph[path[-1]][path[0]]
+    #     for i in range(n - 1):
+    #         length += self.graph[path[i]][path[i + 1]]
+    #     return length

@@ -3,11 +3,16 @@ from time import perf_counter
 
 from src.intervalo_confianca import ConfidenceInterval
 from src.graphic_run_time import Graphic
-# from src.entities.graph import Graph
 from src.heuristics.NearestNeighbor import NearestNeighbor
 from src.entities.graph import Graph
+
+
 # from src.heuristics.PrimPreOrderMST import PrimPreOrderMST
 # from src.heuristics.Insertion import Insertion
+
+
+def gap(objective_function, optimal_solution):
+    return 100 * ((objective_function - optimal_solution) / optimal_solution)
 
 
 # Função para calcular a distância total, considerando o retorno ao nó inicial
@@ -111,9 +116,9 @@ if __name__ == '__main__':
 
         graph = Graph.load_graph(arquivo)
         graph.load_optimal_solution('../optimal_solutions.txt')
-        graph.start_node = 0
+        # graph.start_node = 0
 
-        tsp_solver = NearestNeighbor(graph)
+        tsp_solver = NearestNeighbor(graph, 0)
 
         begin_1 = perf_counter()
         tsp_solver.solve_nearest_neighbor()
@@ -134,18 +139,14 @@ if __name__ == '__main__':
 
         print(
                 f'NAME: {graph.name: <10} LS_2-OPT: {best_distance: <20} BEST: {graph.optimal_solution: <10}'
-                f' RUN_TIME: {time: <25} GAP: {Graph.gap_calc(graph.optimal_solution, best_distance)}'
+                f' RUN_TIME: {time: <25} GAP: {gap(best_distance, graph.optimal_solution)}'
         )
 
         run_time.append(time)
-        gaps.append(Graph.gap_calc(graph.optimal_solution, best_distance))
+        gaps.append(gap(graph.optimal_solution, best_distance))
 
     graphic = Graphic('2-OPT', run_time)
-    #
-    # graphic_ic = ConfidenceInterval()
-    #
     Graphic.plot_graphic(graphic, graphic, graphic)
-    #
-    # print(gaps, run_time)
-    #
-    # ConfidenceInterval.calculate_ci(gaps)
+
+    graphic_ic = ConfidenceInterval(gaps)
+    ConfidenceInterval.calculate_ci(gaps)
