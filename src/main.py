@@ -7,6 +7,7 @@ from heuristics.Insertion import Insertion
 from entities.graph import Graph
 from local_search.TwoOpt import TwoOpt
 from local_search.Reverse import Reverse
+from local_search.ThreeOpt import ThreeOpt
 
 
 def main():
@@ -16,8 +17,10 @@ def main():
     parser.add_argument("output_file", type=str, help="Caminho para o arquivo de saída dos resultados")
     parser.add_argument("best_known_solution", type=float, help="Melhor solução conhecida para a instância")
     parser.add_argument("heuristic", type=str,
-                        choices=["MST", "NN", "INS", "LS-NN-2Opt", "LS-MST-2Opt", "LS-INS-2Opt", "LS-NN-2DnI",
-                                 "LS-MST-DnI", "LS-INS-DnI", "LS-NN-Rev", "LS-MST-Rev", "LS-INS-Rev"],
+                        choices=["MST", "NN", "INS", "LS-NN-2Opt", "LS-NN-3Opt", "LS-MST-2Opt", "LS-MST-3Opt",
+                                 "LS-INS-2Opt",
+                                 "LS-INS-3Opt"
+                                 "LS-NN-2DnI", "LS-MST-DnI", "LS-INS-DnI", "LS-NN-Rev", "LS-MST-Rev", "LS-INS-Rev"],
                         help="Heurística a ser usada (MST, NN, INS)")
     parser.add_argument("start_node", type=int, help="Nó de início")
 
@@ -70,7 +73,6 @@ def argument_process(input):
 
 
 def Constructive_Heuristic(constructive_heuristic, graph, args):
-
     if constructive_heuristic == "MST":
         tsp_solver = PrimPreOrderMST(graph, args.start_node - 1)
         tsp_solver.run_time = measure_execution_time(tsp_solver.solve_prim_pre_order_mst)
@@ -88,7 +90,6 @@ def Constructive_Heuristic(constructive_heuristic, graph, args):
 
 
 def Local_Search(neighbor_struct, graph, tsp_solver):
-
     if neighbor_struct == "2Opt":
         tsp_local_search = TwoOpt(graph.graph, tsp_solver.run_time, tsp_solver.path, tsp_solver.total_cost)
         tsp_local_search.run_time += measure_execution_time(tsp_local_search.solve_two_opt)
@@ -98,8 +99,8 @@ def Local_Search(neighbor_struct, graph, tsp_solver):
         tsp_local_search.run_time += measure_execution_time(tsp_local_search.solve_reverse)
         return tsp_local_search
     elif neighbor_struct == "3Opt":
-        tsp_local_search = TwoOpt(graph.graph, tsp_solver.run_time, tsp_solver.path, tsp_solver.total_cost)
-        tsp_local_search.run_time += measure_execution_time(tsp_local_search.solve_two_opt)
+        tsp_local_search = ThreeOpt(graph.graph, tsp_solver.run_time, tsp_solver.path, tsp_solver.total_cost)
+        tsp_local_search.run_time += measure_execution_time(tsp_local_search.solve_three_opt)
         return tsp_local_search
 
 
