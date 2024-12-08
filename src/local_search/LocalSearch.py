@@ -5,10 +5,31 @@ from src.intervalo_confianca import ConfidenceInterval
 from src.graphic_run_time import Graphic
 from src.heuristics.NearestNeighbor import NearestNeighbor
 from src.entities.graph import Graph
-
+import matplotlib.pyplot as plt
 
 # from src.heuristics.PrimPreOrderMST import PrimPreOrderMST
 # from src.heuristics.Insertion import Insertion
+
+
+def box_plot(dados):
+    # Criando o boxplot
+    plt.figure(figsize=(8, 6))
+    plt.boxplot(dados, tick_labels=['2-OPT', 'REVERSE', '3-OPT'], patch_artist=True,
+                boxprops=dict(facecolor='lightblue', color='blue'),
+                medianprops=dict(color='red', linewidth=1.5),
+                whiskerprops=dict(color='blue'),
+                capprops=dict(color='blue'),
+                flierprops=dict(marker='o', color='blue', alpha=0.5))
+
+    # Adicionando título e rótulos
+    plt.title('Boxplot de Gaps dos Algoritmos de Busca Local', fontsize=14)
+    plt.ylabel('Gap', fontsize=12)
+    plt.xlabel('Busca Local', fontsize=12)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+    # Mostrando o gráfico
+    plt.tight_layout()
+    plt.show()
 
 
 def gap(objective_function, optimal_solution):
@@ -109,44 +130,76 @@ if __name__ == '__main__':
     folder = '../files/benchmark'
     file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
 
-    run_time = []
-    gaps = []
+    start_node = 0
+
+    run_time_1 = []
+    run_time_2 = []
+    run_time_3 = []
+
+    gaps_1 = []
+    gaps_2 = []
+    gaps_3 = []
 
     for arquivo in file_list:
 
         graph = Graph.load_graph(arquivo)
         graph.load_optimal_solution('../optimal_solutions.txt')
-        # graph.start_node = 0
 
-        tsp_solver = NearestNeighbor(graph, 0)
+        tsp_solver = NearestNeighbor(graph, start_node)
+        # tsp_solver = PrimPreOrderMST(graph, start_node)
+        # tsp_solver = Insertion(graph, start_node)
 
-        begin_1 = perf_counter()
+        # Nearest Neighbor
+        begin_11 = perf_counter()
         tsp_solver.solve_nearest_neighbor()
-        end_1 = perf_counter()
+        end_11 = perf_counter()
 
-        # tsp_solver = PrimPreOrderMST(graph)
-        # tsp_solver.solve_prim_pre_order_mst()
+        begin_21 = perf_counter()
+        route_1, best_distance_1 = two_opt(tsp_solver.path, tsp_solver.graph.graph, tsp_solver.total_cost)
+        end_21 = perf_counter()
 
-        # tsp_solver = Insertion(graph)
-        # tsp_solver.solve_insertion()
+        begin_22 = perf_counter()
+        route_2, best_distance_2 = reverse(tsp_solver.path, tsp_solver.graph.graph, tsp_solver.total_cost)
+        end_22 = perf_counter()
 
-        begin_2 = perf_counter()
-        # route, best_distance = two_opt(tsp_solver.path, tsp_solver.graph.graph, tsp_solver.total_cost)
-        route, best_distance = delete_and_insert(tsp_solver.path, tsp_solver.graph.graph, tsp_solver.total_cost)
-        end_2 = perf_counter()
+        begin_33 = perf_counter()
+        route_3, best_distance_3 = delete_and_insert(tsp_solver.path, tsp_solver.graph.graph, tsp_solver.total_cost)
+        end_33 = perf_counter()
 
-        time = (end_1 - begin_1) + (end_2 - begin_2)
+        time_1 = (end_11 - begin_11) + (end_21 - begin_21)
+        time_2 = (end_11 - begin_11) + (end_22 - begin_22)
+        time_3 = (end_11 - begin_11) + (end_33 - begin_33)
 
         print(
-                f'NAME: {graph.name: <10} LS_2-OPT: {best_distance: <20} BEST: {graph.optimal_solution: <10}'
-                f' RUN_TIME: {time: <25} GAP: {gap(best_distance, graph.optimal_solution)}'
+                f'NAME: {graph.name: <15} LS_2-Opt: {best_distance_1: <20} BEST: {graph.optimal_solution: <10}'
+                f' RUN_TIME: {time_1: <25} GAP: {gap(best_distance_1, graph.optimal_solution)}'
+        )
+        print(
+            f'NAME: {graph.name: <15} LS_Rev: {best_distance_2: <20} BEST: {graph.optimal_solution: <10}'
+            f' RUN_TIME: {time_2: <25} GAP: {gap(best_distance_2, graph.optimal_solution)}'
         )
 
-        run_time.append(time)
-        gaps.append(gap(graph.optimal_solution, best_distance))
+        print(
+            f'NAME: {graph.name: <15} LS_DnI: {best_distance_3: <20} BEST: {graph.optimal_solution: <10}'
+            f' RUN_TIME: {time_3: <25} GAP: {gap(best_distance_3, graph.optimal_solution)}'
+        )
 
-    graphic = Graphic('2-OPT', run_time)
-    Graphic.plot_graphic(graphic, graphic, graphic)
+        run_time_1.append(time_1)
+        run_time_2.append(time_2)
+        run_time_3.append(time_3)
 
-    graphic_ic = ConfidenceInterval(gaps)
-    ConfidenceInterval.calculate_ci(gaps)
+        gaps_1.append(gap(best_distance_1, graph.optimal_solution))
+        gaps_2.append(gap(best_distance_2, graph.optimal_solution))
+        gaps_3.append(gap(best_distance_3, graph.optimal_solution))
+
+    graphic_1 = Graphic('RUN TIME - 2-OPT', run_time_1)
+    graphic_2 = Graphic('RUN TIME - REVERSE', run_time_2)
+    graphic_3 = Graphic('RUN TIME - DELETE AND INSERT', run_time_3)
+
+    Graphic.plot_graphic(graphic_1, graphic_2, graphic_3)
+
+    ConfidenceInterval.calculate_ci(gaps_1, '2-OPT')
+    ConfidenceInterval.calculate_ci(gaps_2, 'REVERSE')
+    ConfidenceInterval.calculate_ci(gaps_3, 'DELETE AND INSERT')
+
+    box_plot([gaps_1, gaps_2, gaps_3])

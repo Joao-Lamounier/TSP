@@ -50,7 +50,7 @@ class ConfidenceInterval:
         self.media = np.mean(self.gaps)
 
     @staticmethod
-    def calculate_ci(valores_gaps):
+    def calculate_ci(valores_gaps, nome):
 
         benchmarks = [f"Benchmark {i+1}" for i in range(20)]  # Nomes dos benchmarks
         x = np.arange(len(benchmarks))  # Índices dos benchmarks
@@ -75,7 +75,7 @@ class ConfidenceInterval:
         plt.xticks(x, benchmarks, rotation=45, ha='right')  # Benchmarks como rótulos no eixo X
         plt.ylabel('Valor do Gap')
         plt.xlabel('Benchmarks')
-        plt.title('Intervalo de Confiança Global dos Gaps')
+        plt.title('Intervalo de Confiança - ' + nome)
         plt.legend()
         plt.grid(axis='y', linestyle='--', alpha=0.7)
         plt.tight_layout()

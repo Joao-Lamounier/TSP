@@ -32,9 +32,9 @@ class Graphic:
         bar_width = graphic_1.largura  # Assumindo que todas as larguras de barra são iguais
 
         # Ajustar as posições para garantir que as barras fiquem alinhadas e com o mesmo espaçamento
-        ax.bar(ind - bar_width, graphic_1.run_time, bar_width, label='LS N1', color='b')
-        ax.bar(ind, graphic_2.run_time, bar_width, label='LS N2', color='g')
-        ax.bar(ind + bar_width, graphic_3.run_time, bar_width, label='LS N3', color='r')
+        ax.bar(ind - bar_width, graphic_1.run_time, bar_width, label='2-OPT', color='b')
+        ax.bar(ind, graphic_2.run_time, bar_width, label='REVERSE', color='g')
+        ax.bar(ind + bar_width, graphic_3.run_time, bar_width, label='3-OPT', color='r')
 
         # Adicionando rótulos, título e legendas
         ax.set_xlabel('Instâncias')
@@ -49,37 +49,37 @@ class Graphic:
         plt.show()
 
 
-if __name__ == '__main__':
-
-    folder = 'files/benchmark'
-    file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
-
-    run_time = []
-    run_time_2 = []
-    run_time_3 = []
-
-    for arquivo in file_list:
-
-        graph = Graph.load_graph(arquivo)
-        graph.load_optimal_solution('optimal_solutions.txt')
-        graph.start_node = 0
-
-        nn = NearestNeighbor(graph)
-        inicio = perf_counter()
-        nn.solve_nearest_neighbor()
-        fim = perf_counter()
-        nn.run_time = fim - inicio
-
-        run_time.append(nn.run_time)
-
-        print(
-            f'NAME: {graph.name: <10} NN: {nn.total_cost: <20} BEST: {graph.optimal_solution: <10}'
-            f' RUN_TIME: {nn.run_time: <25} GAP: {Graph.gap_calc(graph.optimal_solution, nn.total_cost)}'
-        )
-
-    graphic = Graphic('Gráfico de Barras', run_time)
-
-    Graphic.plot_graphic(graphic, graphic, graphic)
-
-
-
+# if __name__ == '__main__':
+#
+#     folder = 'files/benchmark'
+#     file_list = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith('.tsp')]
+#
+#     run_time = []
+#     run_time_2 = []
+#     run_time_3 = []
+#
+#     for arquivo in file_list:
+#
+#         graph = Graph.load_graph(arquivo)
+#         graph.load_optimal_solution('optimal_solutions.txt')
+#         graph.start_node = 0
+#
+#         nn = NearestNeighbor(graph)
+#         inicio = perf_counter()
+#         nn.solve_nearest_neighbor()
+#         fim = perf_counter()
+#         nn.run_time = fim - inicio
+#
+#         run_time.append(nn.run_time)
+#
+#         print(
+#             f'NAME: {graph.name: <10} NN: {nn.total_cost: <20} BEST: {graph.optimal_solution: <10}'
+#             f' RUN_TIME: {nn.run_time: <25} GAP: {Graph.gap_calc(graph.optimal_solution, nn.total_cost)}'
+#         )
+#
+#     graphic = Graphic('Gráfico de Barras', run_time)
+#
+#     Graphic.plot_graphic(graphic, graphic, graphic)
+#
+#
+#

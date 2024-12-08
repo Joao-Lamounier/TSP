@@ -86,6 +86,7 @@ def Constructive_Heuristic(constructive_heuristic, graph, args):
         tsp_solver.run_time = measure_execution_time(tsp_solver.solve_insertion)
         return tsp_solver
 
+
 def Local_Search(neighbor_struct, graph, tsp_solver):
 
     if neighbor_struct == "2Opt":
