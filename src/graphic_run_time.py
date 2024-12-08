@@ -39,7 +39,7 @@ class Graphic:
         # Adicionando rótulos, título e legendas
         ax.set_xlabel('Instâncias')
         ax.set_ylabel('Tempo de Execução (segundos)')
-        ax.set_title('Tempo de Execução por Instância e Heurística')
+        ax.set_title('Tempo de Execução - Busca Local')
         ax.set_xticks(ind)
         ax.set_xticklabels(graphic_1.instancias)
         ax.legend()

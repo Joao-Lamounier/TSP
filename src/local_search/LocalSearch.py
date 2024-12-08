@@ -7,6 +7,7 @@ from src.heuristics.NearestNeighbor import NearestNeighbor
 from src.entities.graph import Graph
 import matplotlib.pyplot as plt
 
+
 # from src.heuristics.PrimPreOrderMST import PrimPreOrderMST
 # from src.heuristics.Insertion import Insertion
 
@@ -170,19 +171,20 @@ if __name__ == '__main__':
         time_2 = (end_11 - begin_11) + (end_22 - begin_22)
         time_3 = (end_11 - begin_11) + (end_33 - begin_33)
 
-        print(
-                f'NAME: {graph.name: <15} LS_2-Opt: {best_distance_1: <20} BEST: {graph.optimal_solution: <10}'
-                f' RUN_TIME: {time_1: <25} GAP: {gap(best_distance_1, graph.optimal_solution)}'
-        )
+        # print(
+        #         f'NAME: {graph.name: <15} LS_2-Opt: {best_distance_1: <20} BEST: {graph.optimal_solution: <10}'
+        #         f' RUN_TIME: {time_1: <25} GAP: {gap(best_distance_1, graph.optimal_solution)}'
+        # )
+
         print(
             f'NAME: {graph.name: <15} LS_Rev: {best_distance_2: <20} BEST: {graph.optimal_solution: <10}'
             f' RUN_TIME: {time_2: <25} GAP: {gap(best_distance_2, graph.optimal_solution)}'
         )
-
-        print(
-            f'NAME: {graph.name: <15} LS_DnI: {best_distance_3: <20} BEST: {graph.optimal_solution: <10}'
-            f' RUN_TIME: {time_3: <25} GAP: {gap(best_distance_3, graph.optimal_solution)}'
-        )
+        #
+        # print(
+        #     f'NAME: {graph.name: <15} LS_DnI: {best_distance_3: <20} BEST: {graph.optimal_solution: <10}'
+        #     f' RUN_TIME: {time_3: <25} GAP: {gap(best_distance_3, graph.optimal_solution)}'
+        # )
 
         run_time_1.append(time_1)
         run_time_2.append(time_2)
