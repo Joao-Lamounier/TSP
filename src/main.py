@@ -32,12 +32,11 @@ def main():
     graph = Graph.load_graph(folder + args.input_file)
 
     # Escolha e execução da heurística construtiva
-    tsp_solver = Constructive_Heuristic(constructive_heuristic, graph, args)
+    tsp_solver = define_constructive_heuristic(constructive_heuristic, graph, args)
 
     # Escolha e execução da heurística -> buscal local
-    objective_function, run_time = 0.0, 0.0
     if local_search is not None:
-        tsp_local_search = Local_Search(neighbor_struct, graph, tsp_solver)
+        tsp_local_search = define_local_search(neighbor_struct, graph, tsp_solver)
         objective_function = tsp_local_search.objective_function
         run_time = tsp_local_search.run_time
     else:
@@ -51,20 +50,20 @@ def main():
     if not file_exists:
         with open(args.output_file, 'a') as f:
             f.write(
-                f"{'INSTANCE': <12}{'METHOD': <15}{'PARAM': <10}{'OBJECTIVE': <20}{'RUNTIME': <25}"
+                f"{'INSTANCE': <15}{'METHOD': <15}{'PARAM': <10}{'OBJECTIVE': <20}{'RUNTIME': <25}"
                 f"{'GAP': <20}{'NODES': <10}{'ARCS': <5}\n")
 
     # Escrita dos dados normalmente
     with open(args.output_file, 'a') as f:
         f.write(
-            f"{args.input_file: <12}{args.heuristic: <15}{args.start_node: <10}{objective_function: <20}"
+            f"{args.input_file: <15}{args.heuristic: <15}{args.start_node: <10}{objective_function: <20}"
             f"{run_time: <25}{gap(objective_function, args.best_known_solution): <20}"
             f"{graph.dimension: <10}{graph.arcs: <5}\n")
 
 
-def argument_process(input):
+def argument_process(command_string):
     # Dividindo a string em partes com base no separador "-"
-    parts = input.split('-')
+    parts = command_string.split('-')
 
     if len(parts) == 1:
         return None, parts[0], None
@@ -72,36 +71,40 @@ def argument_process(input):
         return parts[0], parts[1], parts[2]
 
 
-def Constructive_Heuristic(constructive_heuristic, graph, args):
+def define_constructive_heuristic(constructive_heuristic, graph, args):
+    tsp_solver = None
+
     if constructive_heuristic == "MST":
         tsp_solver = PrimPreOrderMST(graph, args.start_node - 1)
         tsp_solver.run_time = measure_execution_time(tsp_solver.solve_prim_pre_order_mst)
-        return tsp_solver
 
     elif constructive_heuristic == "NN":
         tsp_solver = NearestNeighbor(graph, args.start_node - 1)
         tsp_solver.run_time = measure_execution_time(tsp_solver.solve_nearest_neighbor)
-        return tsp_solver
 
     elif constructive_heuristic == 'INS':
         tsp_solver = Insertion(graph, args.start_node - 1)
         tsp_solver.run_time = measure_execution_time(tsp_solver.solve_insertion)
-        return tsp_solver
+
+    return tsp_solver
 
 
-def Local_Search(neighbor_struct, graph, tsp_solver):
+def define_local_search(neighbor_struct, graph, tsp_solver):
+    tsp_local_search = None
+
     if neighbor_struct == "2Opt":
         tsp_local_search = TwoOpt(graph.graph, tsp_solver.run_time, tsp_solver.path, tsp_solver.total_cost)
         tsp_local_search.run_time += measure_execution_time(tsp_local_search.solve_two_opt)
-        return tsp_local_search
+
     elif neighbor_struct == "Rev":
         tsp_local_search = Reverse(graph.graph, tsp_solver.run_time, tsp_solver.path, tsp_solver.total_cost)
         tsp_local_search.run_time += measure_execution_time(tsp_local_search.solve_reverse)
-        return tsp_local_search
+
     elif neighbor_struct == "3Opt":
         tsp_local_search = ThreeOpt(graph.graph, tsp_solver.run_time, tsp_solver.path, tsp_solver.total_cost)
         tsp_local_search.run_time += measure_execution_time(tsp_local_search.solve_three_opt)
-        return tsp_local_search
+
+    return tsp_local_search
 
 
 # Função que calcula o gap

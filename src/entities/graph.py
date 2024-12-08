@@ -41,7 +41,7 @@ class Graph:
                     elif line.startswith("TYPE"):
                         problem_type = line.split(":")[1].strip()  # Tipo de problema
                     elif line.startswith("DIMENSION"):
-                        dimension = int(line.split(":")[1].strip())  # Número de cidades (dimensão)
+                        dimension = int(line.split(":")[1].strip())  # Número de nós (dimensão)
                     elif line.startswith("EDGE_WEIGHT_TYPE"):
                         edge_weight_type = line.split(":")[1].strip()  # Tipo de distância (EUC_2D ou outro)
                     elif line == "NODE_COORD_SECTION":
@@ -53,10 +53,10 @@ class Graph:
                     # A linha contém as coordenadas (id, x, y)
                     parts = line.split()
                     if len(parts) == 3:
-                        node_id = int(parts[0])  # ID da cidade
+                        node_id = int(parts[0])  # ID do nó
                         x = float(parts[1])  # Coordenada x
                         y = float(parts[2])  # Coordenada y
-                        node_list.append((node_id, x, y))  # Armazena a cidade
+                        node_list.append((node_id, x, y))  # Armazena o nó
 
         return Graph(name, comment, problem_type, dimension, edge_weight_type, node_list)
 
@@ -65,21 +65,3 @@ class Graph:
         x = node1[1] - node2[1]
         y = node1[2] - node2[2]
         return math.sqrt(x * x + y * y)
-
-    def load_optimal_solution(self, file_path):
-        with open(file_path, 'r') as f:
-            lines = f.readlines()
-
-            for line in lines:
-                line = line.strip()
-                if line.startswith(self.name):
-                    self.optimal_solution = float(line.split()[1].strip())
-                    return
-
-    # def path_length(self, path):
-    #     """Calculate the total length of a path."""
-    #     n = len(path)
-    #     length = self.graph[path[-1]][path[0]]
-    #     for i in range(n - 1):
-    #         length += self.graph[path[i]][path[i + 1]]
-    #     return length

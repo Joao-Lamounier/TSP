@@ -1,12 +1,6 @@
-def calculate_distance(route, distance_matrix):
-    total_distance = 0
-    for i in range(len(route) - 1):
-        total_distance += distance_matrix[route[i], route[i + 1]]
-    total_distance += distance_matrix[route[-1], route[0]]
-    return total_distance
+from .LocalSearch import LocalSearch
 
-
-class TwoOpt:
+class TwoOpt(LocalSearch):
 
     def __init__(self, distance_matrix, run_time, path, objective_function):
         self.distance_matrix = distance_matrix
@@ -28,7 +22,7 @@ class TwoOpt:
                 for j in range(i + 1, self.n):
 
                     new_route = route[:i] + list(reversed(route[i:j])) + route[j:]
-                    new_distance = calculate_distance(new_route, self.distance_matrix)
+                    new_distance = self.calculate_distance(new_route, self.distance_matrix)
 
                     if new_distance < best_distance:
                         route = new_route
