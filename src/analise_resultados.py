@@ -26,7 +26,7 @@ def plot_graphic(rt_2opt, rt_rev, rt_3opt, instancias):
     ax.set_ylabel('Tempo de Execução (segundos)')
     ax.set_title('Tempo de Execução - Busca Local')
     ax.set_xticks(ind)
-    ax.set_xticklabels(instancias)
+    ax.set_xticklabels(instancias, rotation=45, ha='right')
     ax.legend()
 
     # Exibindo o gráfico
@@ -34,9 +34,9 @@ def plot_graphic(rt_2opt, rt_rev, rt_3opt, instancias):
     plt.show()
 
 
-def calculate_ci(valores_gaps, nome):
+def calculate_ci(valores_gaps, nome, benchmarks):
 
-    benchmarks = [f"Benchmark {i+1}" for i in range(20)]  # Nomes dos benchmarks
+    # benchmarks = [f"Benchmark {i+1}" for i in range(20)]  # Nomes dos benchmarks
     x = np.arange(len(benchmarks))  # Índices dos benchmarks
 
     # Calcular média e intervalo de confiança global
@@ -106,14 +106,34 @@ if __name__ == '__main__':
                  2.776725312779963, 3.281928562076173, 2.341076393447998, 2.6166575846300724, 0.82799396670231,
                  6.164828783444121, 7.703725390989318, 2.4711545657736216, 0.31253470738470746, 6.6714575015762385]
 
+    rt_3opt = [18941.109269948996, 2.1880533319999813, 1535.561020235, 1557.0649181519984, 4757.821760028,
+               667.6021021309971, 6.60929553099777, 254.95071903800272, 683.2204907509986, 404.98796532499546,
+               54.138547012000345, 617.9474464329978, 750.5467141469999, 612.4759026199972, 412.65518922999763,
+               534.0189127980011, 34.1412457760016, 43827.675052583, 162.3595915320002, 3227.1050715900055]
+
+    rt_rev = [8.82127828199998, 0.024556294000149137, 0.5423246789999894, 1.3646568770001295, 3.711020493999854,
+              0.33319064199997683, 0.06592931799991675, 0.17951775999995334, 0.4830106769999247, 0.402028343999973,
+              0.32815377200006424, 0.32564730400008557, 0.40274729600002956, 0.48216145300011704, 0.14545222399999602,
+              0.3110004589999562, 0.3196170980000943, 23.373900296999864, 0.08680126400008703, 3.7160827820000577]
+
+    rt_2opt = [9.314653171999907, 0.026452127000084147, 0.5947861909999119, 1.1292393769997489, 3.7782457009998325,
+               0.5210430409999844, 0.057227354000133346, 0.1900221060000149, 0.33435157300004903, 0.5125183809998362,
+               0.3403801330000533, 0.337668481000037, 0.4110900230000425, 0.38972763399988253, 0.22726638800008914,
+               0.4074567060001755, 0.3370810060000622, 23.75872444000015, 0.14871486900005948, 3.763270849000037]
+
+    nomes = ['a280.tsp', 'berlin52.tsp', 'ch130.tsp', 'ch150.tsp', 'd198.tsp', 'eil101.tsp', 'eil51.tsp',
+            'eil76.tsp', 'kroA100.tsp', 'kroB100.tsp', 'kroC100.tsp', 'kroD100.tsp', 'kroE100.tsp', 'lin105.tsp',
+            'pr76.tsp', 'rat99.tsp', 'rd100.tsp', 'rd400.tsp', 'st70.tsp', 'ts225.tsp']
+
     dados = [gaps_2opt, gaps_rev, gaps_3opt]
 
     # Gráfico Box Plot
     box_plot(dados)
 
     # Intervalos de Confiança
-    calculate_ci(gaps_2opt, '2-OPT')
-    calculate_ci(gaps_rev, 'Reverse')
-    calculate_ci(gaps_3opt, '3-OPT')
+    calculate_ci(gaps_2opt, '2-OPT', nomes)
+    calculate_ci(gaps_rev, 'Reverse', nomes)
+    calculate_ci(gaps_3opt, '3-OPT', nomes)
 
     # Gráfico Run Time
+    plot_graphic(rt_2opt, rt_rev, rt_3opt, nomes)
