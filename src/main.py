@@ -36,9 +36,9 @@ def parse_arguments():
     parser.add_argument("output_file", type=str, help="Caminho para o arquivo de saída dos resultados")
     parser.add_argument("best_known_solution", type=float, help="Melhor solução conhecida para a instância")
     parser.add_argument("heuristic", type=str,
-                        choices=["MST", "NN", "INS", "LS-NN-2Opt", "LS-NN-3Opt", "LS-MST-2Opt", "LS-MST-3Opt",
-                                 "LS-INS-2Opt", "LS-INS-3Opt", "LS-NN-2DnI", "LS-MST-DnI", "LS-INS-DnI", "LS-NN-Rev",
-                                 "LS-MST-Rev", "LS-INS-Rev"],
+                        choices=["NN", "MST", "INS", "LS-NN-2Opt", "LS-NN-3Opt", "LS-NN-Rev",
+                                 "LS-MST-2Opt", "LS-MST-3Opt", "LS-MST-Rev",
+                                 "LS-INS-2Opt", "LS-INS-3Opt", "LS-INS-Rev"],
                         help="Heurística a ser usada (MST, NN, INS)")
     parser.add_argument("start_node", type=int, help="Nó de início")
     return parser.parse_args()
