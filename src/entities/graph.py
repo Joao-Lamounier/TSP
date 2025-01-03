@@ -65,3 +65,13 @@ class Graph:
         x = node1[1] - node2[1]
         y = node1[2] - node2[2]
         return math.sqrt(x * x + y * y)
+
+    def load_optimal_solution(self, file_path):
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+
+            for line in lines:
+                line = line.strip()
+                if line.startswith(self.name):
+                    self.optimal_solution = float(line.split()[1].strip())
+                    break
