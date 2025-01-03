@@ -42,7 +42,7 @@ def parse_arguments():
                                  "LS-NN-2Opt", "LS-NN-3Opt", "LS-NN-Rev",
                                  "LS-MST-2Opt", "LS-MST-3Opt", "LS-MST-Rev",
                                  "LS-INS-2Opt", "LS-INS-3Opt", "LS-INS-Rev",
-                                 "GRASP-1-0.3", "GRASP-200-0.5", "GRASP-150-0.4"],  # Novas opções para GRASP
+                                 "GRASP-100-0.3", "GRASP-200-0.5", "GRASP-150-0.4"],  # Novas opções para GRASP
                         help="Heurística ou metaheurística a ser usada")
     parser.add_argument("start_node", type=int, help="Nó de início")
     return parser.parse_args()

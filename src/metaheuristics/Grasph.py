@@ -6,7 +6,7 @@ import random
 import math
 import numpy as np
 
-from local_search.ThreeOpt import ThreeOpt
+from local_search.TwoOpt import TwoOpt
 
 
 class Grasph:
@@ -48,16 +48,16 @@ class Grasph:
         return solution
 
     def local_search(self, solution):
-        # Realiza uma busca local usando a técnica de 3-opt
+        # Realiza uma busca local usando a técnica de 2-opt
         best_solution = solution[:]
         best_cost = self.calculate_cost(solution)
 
 
-        # Criação do objeto ThreeOpt
-        three_opt_solver = ThreeOpt(self.graph.graph, 100, best_solution, best_cost)
+        # Criação do objeto TwoOpt
+        two_opt_solver = TwoOpt(self.graph.graph, 100, best_solution, best_cost)
 
-        # Resolve com o 3-opt
-        improved_solution, improved_cost = three_opt_solver.solve_three_opt()
+        # Resolve com o 2-opt
+        improved_solution, improved_cost = two_opt_solver.solve_two_opt()
 
         # Verifica se houve melhoria
         if improved_cost < best_cost:
