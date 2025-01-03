@@ -45,7 +45,6 @@ class Grasph:
 
         # Cálculo do custo da solução construída
         cost = self.calculate_cost(solution)
-        print(f"Custo da solução construída: {cost}")  # Print do custo após a fase construtiva
         return solution
 
     def local_search(self, solution):
@@ -53,7 +52,6 @@ class Grasph:
         best_solution = solution[:]
         best_cost = self.calculate_cost(solution)
 
-        print(f"Iniciando a busca local com custo: {best_cost}")  # Print do custo inicial
 
         # Criação do objeto ThreeOpt
         three_opt_solver = ThreeOpt(self.graph.graph, 100, best_solution, best_cost)
@@ -66,7 +64,6 @@ class Grasph:
             best_solution = improved_solution
             best_cost = improved_cost
 
-        print(f"Custo da solução após busca local com 3-opt: {best_cost}")  # Print do custo após a busca local
         return best_solution, best_cost
 
     def calculate_cost(self, solution):
@@ -79,7 +76,6 @@ class Grasph:
 
     def run(self):
         for iteration in range(self.max_iter):
-            print(f"\nIteração {iteration + 1}:")
             # Fase Construtiva
             solution = self.greedy_randomized_construction()
             # Fase Busca Local
@@ -90,6 +86,5 @@ class Grasph:
                 self.best_solution = solution
                 self.best_cost = cost
 
-            print(f"Melhor custo até agora: {self.best_cost}")  # Print do melhor custo encontrado
 
         return self.best_solution, self.best_cost
