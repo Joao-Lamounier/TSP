@@ -9,7 +9,7 @@ from src.local_search.TwoOpt import TwoOpt
 from src.entities.graph import Graph
 
 class Grasp:
-    def __init__(self, graph, start_node, alpha=0.5, max_iter=1):
+    def __init__(self, graph, start_node, alpha=0.5, max_iter=15):
         self.graph = graph
         self.start_node = start_node  # Nó inicial fornecido como parâmetro
         self.alpha = alpha  # Parâmetro de aleatoriedade para construção
@@ -95,7 +95,7 @@ class Grasp:
 
             #print(f"Melhor custo até agora: {self.best_cost}")  # Print do melhor custo encontrado
             end = perf_counter()
-        return self.best_solution, self.best_cost, best_iteration
+        return self.best_solution, self.best_cost
 
 
 if __name__ == '__main__':
@@ -105,19 +105,30 @@ if __name__ == '__main__':
 
     for arquivo in file_list:
 
-        graph = Graph.load_graph(arquivo)
-        graph.load_optimal_solution('../optimal_solutions.txt')
-        graph.start_node = 0
+        if arquivo in ['../files/benchmark\\berlin52.tsp', '../files/benchmark\\eil51.tsp',
+                       '../files/benchmark\\eil76.tsp', '../files/benchmark\\pr76.tsp',
+                       '../files/benchmark\\st70.tsp']:
 
-        grasp = Grasp(graph, 0)
+            for i in range(10):
 
-        begin = perf_counter()
-        best_tour, best_cost, best_iteration = grasp.run()
-        end = perf_counter()
+                graph = Graph.load_graph(arquivo)
+                graph.load_optimal_solution('../optimal_solutions.txt')
+                graph.start_node = 0
 
-        print(
-            f'NAME: {graph.name: <10} GRASP: {grasp.best_cost: <20} BEST: {graph.optimal_solution: <10}'
-            f' RUN_TIME: {end - begin: <25} GAP: '
-            f'{100 * ((grasp.best_cost - graph.optimal_solution) / graph.optimal_solution)} '
-            f'ITERAÇÃO: {best_iteration}'
-        )
+                grasp = Grasp(graph, 0)
+
+                begin = perf_counter()
+                best_tour, best_cost = grasp.run()
+                end = perf_counter()
+
+                # print(
+                #     f'NAME: {graph.name: <10} GRASP: {grasp.best_cost: <20} BEST: {graph.optimal_solution: <10}'
+                #     f' RUN_TIME: {end - begin: <25} GAP: '
+                #     f'{100 * ((grasp.best_cost - graph.optimal_solution) / graph.optimal_solution)} '
+                #     # f'ITERAÇÃO: {best_iteration}'
+                # )
+                print(
+                    f"{graph.name + '.tsp': <15}{'GRASP-15-0.5': <15}{'15-0.5': <10}{grasp.best_cost: <20}"
+                    f"{end - begin: <25}{100 * ((grasp.best_cost - graph.optimal_solution) / graph.optimal_solution): <20}"
+                    f"{graph.dimension: <10}{graph.arcs: <5}"
+                )
