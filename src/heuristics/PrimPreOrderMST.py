@@ -83,7 +83,7 @@ class PrimPreOrderMST:
             float: O custo total do caminho aproximado do TSP.
         """
 
-        total_cost = 0
+        total_cost = 0.0
         for i in range(len(self.path) - 1):
             total_cost += self.graph.graph[self.path[i], self.path[i + 1]]
 
