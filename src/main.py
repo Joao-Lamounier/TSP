@@ -47,40 +47,62 @@ def parse_arguments():
     return parser.parse_args()
 
 
+def heuristic_argument(command_string):
+    if command_string not in ['NN', 'MST', 'INS']:
+        print("[!] -> ERRO: O formato para heurística construtiva está INCORRETO! Use 'NN', 'MST', ou 'INS'")
+        exit(1)
+
+
+def local_search_argument(command_string):
+    ls_pattern = r"LS-(NN|MST|INS)-(2Opt|3Opt|Rev)"
+    match = re.match(ls_pattern, command_string)
+
+    if not match:
+        valid_construtive_heuristics = ['NN', 'MST', 'INS']
+        valid_neighbor_structs = ['2Opt', '3Opt', 'Rev']
+
+        print("[!] -> ERRO: O formato para Busca Local está INCORRETO! "
+              "Use 'LS-<heurística_construtiva>-<estrututa_vizinhança>'"
+              f"\nHeurísticas Construtivas válidas: {valid_construtive_heuristics}"
+              f"\nEstruturas de Vizinhança válidas: {valid_neighbor_structs}")
+        exit(1)
+
+
 def grasp_argument(command_string):
-    if "GRASP" in command_string:
-        grasp_pattern = r"GRASP-(\d+)-([0-1]\.\d+|\d+)"
-        match = re.match(grasp_pattern, command_string)
+    grasp_pattern = r"GRASP-(\d+)-([0-1]\.\d+|\d+)"
+    match = re.match(grasp_pattern, command_string)
 
-        if match:
-            grasp_iter = int(match.group(1))
-            grasp_alpha = float(match.group(2))
+    if match:
+        grasp_iter = int(match.group(1))
+        grasp_alpha = float(match.group(2))
 
-            if grasp_iter <= 0:
-                print("[!] -> ERRO: O número de iterações deve ser maior que 0!")
-                exit(1)
-
-            if not (0.0 <= grasp_alpha <= 1.0):
-                print("[!] -> ERRO: O valor de alpha deve estar entre 0.0 e 1.0!")
-                exit(1)
-        else:
-            print("[!] -> ERRO: O formato para GRASP está incorreto! Use 'GRASP-<iteracoes>-<alpha>'")
+        if grasp_iter <= 0:
+            print("[!] -> ERRO: O número de iterações deve ser maior que 0!")
             exit(1)
+
+        if not (0.0 <= grasp_alpha <= 1.0):
+            print("[!] -> ERRO: O valor de alpha deve estar entre 0.0 e 1.0!")
+            exit(1)
+    else:
+        print("[!] -> ERRO: O formato para GRASP está INCORRETO! Use 'GRASP-<iteracoes>-<alpha>'")
+        exit(1)
 
 
 def argument_process(command_string):
     # Dividindo a string em partes com base no separador "-"
     parts = command_string.split('-')
 
-    if len(parts) == 1:
+    if len(parts) == 1:  # Somente Heurística Construtiva (NN, MST, INS)
+        heuristic_argument(command_string)
         return None, parts[0], None, None
-    elif len(parts) == 3:
-        if parts[0] == "GRASP":
+    else:
+        if parts[0] == "GRASP":  # Metaheurística GRASP
             grasp_argument(command_string)
             return None, "GRASP", None, (int(parts[1]), float(parts[2]))
         else:
+            # Heurística Construtiva + Local Search (LS-NN-2Opt, LS-MST-Rev, LS-INS-3Opt)
+            local_search_argument(command_string)
             return parts[0], parts[1], parts[2], None
-    return None, parts[0], None, None
 
 
 def load_graph(input_file):
