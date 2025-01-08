@@ -2,11 +2,11 @@ import random
 
 
 class Grasp:
-    def __init__(self, graph, start_node, alpha=0.5, max_iter=15):
+    def __init__(self, graph, start_node, alpha, max_iter):
         self.graph = graph
         self.start_node = start_node
         self.alpha = alpha  # Parâmetro de aleatoriedade para construção
-        self.max_iter = max_iter if alpha != 0.0 else 1  # Alpha igual a 0.0, só é necessário uma iteração
+        self.max_iter = max_iter
         self.path = []
         self.objective_function = float('inf')
         self.run_time = 0.0
