@@ -30,5 +30,9 @@ class Reverse(LocalSearch):
                         route = new_route
                         best_distance = new_distance
                         improved = True
+                        break
+
+                if improved:
+                    break
 
         self.path, self.objective_function = route, best_distance
