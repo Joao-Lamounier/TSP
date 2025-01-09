@@ -169,20 +169,20 @@ def write_results(args, graph, objective_function, run_time):
     if not file_exists:
         with open(args.output_file, 'a') as f:
             f.write(
-                f"{'INSTANCE': <15}{'METHOD': <15}{'PARAM': <10}{'OBJECTIVE': <20}{'RUNTIME': <25}"
-                f"{'GAP': <20}{'NODES': <10}{'ARCS': <5}\n")
+                f"{'INSTANCE': <15}{'METHOD': <20}{'PARAM': <15}{'OBJECTIVE': <22}{'RUNTIME': <25}"
+                f"{'GAP': <22}{'NODES': <12}{'ARCS': <5}\n")
 
     with open(args.output_file, 'a') as f:
         method_params = args.method.split('-')
         if len(method_params) > 2:
-            param = f"{method_params[1]}-{method_params[2]}"
+            param = f"{method_params[1]}-{method_params[2]} {args.start_node}"
         else:
             param = args.start_node
 
         f.write(
-            f"{args.input_file: <15}{args.method: <15}{param: <10}{objective_function: <20}"
-            f"{run_time: <25}{gap(objective_function, args.best_known_solution): <20}"
-            f"{graph.dimension: <10}{graph.arcs: <5}\n")
+            f"{args.input_file: <15}{args.method: <20}{param: <15}{objective_function: <22}"
+            f"{run_time: <25}{gap(objective_function, args.best_known_solution): <22}"
+            f"{graph.dimension: <12}{graph.arcs: <5}\n")
 
 
 def gap(objective_function, optimal_solution):
